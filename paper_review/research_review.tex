@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\begin{document}
+\author{Prabath Peiris}
+\date{}
+\title{Review: Game Tree Searching by Min/Max Approximation}
+\maketitle
+This paper \cite{Rivest:1987:GTS:42942.42945} introduces a new technique for searching in game trees based on the idea of approximation the min and max operations with generalized mean value operations.
+
+\section*{Generalized p-mean method}
+\begin{equation}
+M_p(a) = (\frac{1}{n} \sum_{i=1}^{n} a_i^p)^{1/p}
+\label{eq:mean}
+\end{equation}
+Where $a$ is vector of $n$ real numbers, $a=(a_1, a_2, \dots, a_n), a_i\in\mathbb{R_{+}}$. Equation \ref{eq:mean} is the ordinary arithmetic mean (p-mean).
+
+
+\begin{equation}
+lim_{p\rightarrow\infty} M_{p}(a) = max(a_1, a_2, \dots, a_n)
+\label{eq:max}
+\end{equation}
+
+\begin{equation}
+lim_{p\rightarrow -\infty} M_{p}(a) = min(a_1, a_2, \dots, a_n)
+\label{eq:min}
+\end{equation}
+
+There are two interesting properties about equation \ref{eq:mean} that show in equation \ref{eq:max} and \ref{eq:min}. For large $p$, \ref{eq:max} give good approximation to $max_i(a_i)$ and for smaller $p$, \ref{eq:min} give a good approximation to $min_i(a_i)$.
+
+\begin{equation}
+\frac{\partial M_p(a)}{\partial a_i} = \frac{1}{n} \Big(\frac{a_i}{M_p(a)}\Big)^{p-1}
+\label{eq:pmean}
+\end{equation}
+It is also woth noting that equation \ref{eq:mean}has continuous derivatives on each variable ($a_i$) (shown in equation \ref{eq:pmean}). This allows identifying the leaf node upon whose value the root value depends most strongly.
+
+
+\section*{Penalty-based iterative search method}
+
+This method present a general method for choosing which leaf to expand in an iterative method.
+
+
+\begin{equation}
+w(x) = -log(D(f(x), x))
+\label{eq:wx}
+\end{equation}
+where $D(x,y) = \frac{\partial \tilde v_E(x)}{\partial \tilde v_E(y)}$, $\tilde v_E(x)$ is the approximated value of $x$ by generalized p-mean function
+
+
+In each iterative step of the search tree, a leaf node of the current tree is selected, and the successors of that leaf node are added to the tree. Then the values provided by the static evaluator at the new leaves are used to provide new backed-up values to the leaves' ancestors. A non-negative weight is added to every edge in tree and edges representing bad moves are penalized more than edges presented by good moves. The equation \ref{eq:wx} shows the penalty of an edge between node x and its father f(x) that defined as the negatives of the logarithms of the derivatives.
+
+
+\begin{equation}
+P(c) = \sum_{d\in A(c)} w(d)
+\label{eq:pc}
+\end{equation}
+Where $A(c)$ is the set of ancestors of leaf node $c$. The equation \ref{eq:pc} shows the penalty of a leaf node $c$ is defined as the sum of the weights of all the edges between d and the root $s$. The general steps of penalty-based iterative search method:
+\begin{enumerate}
+\item Let E be the partial tree searched, start E as root node s
+\item While, E is not equal to the entire game tree C and time permits, do:
+\item Pick an expandable tip c of E with the least penalty. (so that the root approximation
+value will depends on it most strongly) “Expandable tip c” means c is a tip node in E but
+has children in C.
+\item Expand E at c by adding children of c in C to E.
+\item Update the approximation value at c and the ancestors of c up to the root s by using the
+generalized p-mean function
+\end{enumerate}
+
+*\emph{refer to the paper \cite{Rivest:1987:GTS:42942.42945} for more details}
+\bibliography{bibarticle}{}
+\bibliographystyle{plain}
+\end{document}
