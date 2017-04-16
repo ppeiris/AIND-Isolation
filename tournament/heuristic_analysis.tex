@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage{graphicx}
+\usepackage{amsmath}
 \begin{document}
 \author{Prabath Peiris}
 \title{Custom Heuristic Functions}
@@ -9,30 +10,8 @@
 \section*{Heuristic functions}
 
 \begin{equation}
-score = (my\_moves) - (opponent\_moves)
-\label{eq:1}
-\end{equation}
-
-\begin{center}
-\begin{tabular}{|l|l|l|} \hline
-	Match & Student vs & Result \\ \hline
-	1 & Random & 17 to 3 \\
-	2 & MM\_Null & 18 to 2 \\
-	3 & MM\_Open & 12 to 8 \\
-	4 & MM\_Improved & 15 to 5 \\
-	5 & AB\_Null & 17 to 3 \\
-	6 & AB\_Open & 14 to 6 \\
-	7 & AB\_Improved & 16 to 4 \\ \hline\hline
-	\multicolumn{3}{|l|}{Evaluating Student using equation \ref{eq:1}: 77.86\% } \\ \hline
-\end{tabular}
-\end{center}
-
-Equation \ref{eq:1} calculate different between available moves between player 1 (student) and player 2. Positive number ($score > 0 $ ) tells the student has more moves than the opponent. This give more condfident score for the student to win the game.
-
-
-\begin{equation}
 score = (my\_moves) - (2.0 \times opponent\_moves)
-\label{eq:2}
+\label{eq:1}
 \end{equation}
 
 \begin{center}
@@ -45,16 +24,17 @@ score = (my\_moves) - (2.0 \times opponent\_moves)
 	5 & AB\_Null & 19 to 1 \\
 	6 & AB\_Open & 13 to 7 \\
 	7 & AB\_Improved & 14 to 6 \\ \hline\hline
-	\multicolumn{3}{|l|}{Evaluating Student using equation \ref{eq:2}: 80.00\% } \\ \hline
+	\multicolumn{3}{|l|}{Evaluating Student using equation \ref{eq:1}: 80.00\% } \\ \hline
 \end{tabular}
 \end{center}
 
-Equation \ref{eq:2} calcualte the different between player 1 and player 2 available moves by doubling the available moves for the opponent. This make the score value negative (opponent has more moves) much quicker then the \ref{eq:1}. This makes the Player 1 (student) to make more aggresive moves twards wining the game, and lead to $80\%$ success.
+Equation \ref{eq:1} calculate the different between player 1 and player 2 available moves by doubling the available moves for the opponent. During the entire play, the coefficient that used here is constant. This makes the score value negative (opponent has more moves) much quicker. This makes the Player 1 (student) to make more aggressive moves towards winning the game and lead to $80\%$ success.
+
 
 
 \begin{equation}
-score = distance(player1, player2)
-\label{eq:3}
+score = D \times distance(player1, player2)
+\label{eq:2}
 \end{equation}
 
 \begin{center}
@@ -67,11 +47,43 @@ score = distance(player1, player2)
 	5 & AB\_Null & 15 to 5\\
 	6 & AB\_Open & 13 to 7\\
 	7 & AB\_Improved & 10 to 10\\ \hline\hline
-	\multicolumn{3}{|l|}{Evaluating Student using equation \ref{eq:3}: 74.29\% } \\ \hline
+	\multicolumn{3}{|l|}{D = 2.0} \\ \hline
+	\multicolumn{3}{|l|}{Evaluating Student using equation \ref{eq:2}: 74.29\% } \\ \hline
 \end{tabular}
 \end{center}
 
-Equation \ref{eq:3} calculate the distance between the two player locations. I am trying to make the player positions close to each other by calculating the distance between the player's position, and when then distance is greater than $2.0$, the make the distance value negative and use as the score value. This allows players to go after each other more aggressively when the distance getter bigger.
+Equation \ref{eq:2} calculate the distance between the two player locations. This is the Euclidean distance between two points. The euclidean distance between two points is always a positive value. To make it more dynamic, when the distance is greater than 2, we make the distance a negative value $score = \{-score|score > 2\}$. This allows the player to take more aggressive moves when there is a larger distance between pieces; however, this reduces the success rate of the player 1 compare the to the equation \ref{eq:1}.
 
+
+\begin{equation}
+score = (progress) \times my\_moves - (1-progress) \times opponent\_moves
+\label{eq:3}
+\end{equation}
+
+\begin{equation}
+progress=(my\_moves+opponent\_moves)/(board\_width * board\_height)
+\label{eq:4}
+\end{equation}
+
+
+\begin{center}
+\begin{tabular}{|l|l|l|} \hline
+	Match & Student vs & Result \\ \hline
+	1 & Random & 20 to 0 \\
+	2 & MM\_Null & 16 to 4 \\
+	3 & MM\_Open & 14 to 6 \\
+	4 & MM\_Improved & 13 to 7 \\
+	5 & AB\_Null & 19 to 1 \\
+	6 & AB\_Open & 13 to 7 \\
+	7 & AB\_Improved & 14 to 6 \\ \hline\hline
+	\multicolumn{3}{|l|}{Evaluating Student using equation \ref{eq:3}: 77.86\%} \\ \hline
+\end{tabular}
+\end{center}
+
+In equation \ref{eq:3} $progress$ is define equation \ref{eq:4}. When there are more moves available for both players the value of the $progress$ scaling factor have a value close to one. This allow score value to be positive larger value. As the game progress, the value of the $progress$ will keep getting smaller and smaller where when calculating $score$ value will have a negative value. This allow the player 1 to choose more aggressive moves.
+
+\section*{Choise of Heuristic Function}
+
+Comparing the success rated of all of the above functions, I can say the best heuristic function is given by the equation \ref{eq:1} (success rate $80.00\%$). This function produces negative values in very early in the game where the player 1 start taking more aggressive moves toward winning the game. This function also has much less complexity when compare to the other two equations.
 
 \end{document}

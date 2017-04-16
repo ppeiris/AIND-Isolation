@@ -38,26 +38,54 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
-    # TODO: finish this function!
-    if game.is_loser(player):
-        return float("-inf")
+    def heuristic2():
+        if game.is_loser(player):
+            return float("-inf")
 
-    if game.is_winner(player):
-        return float("inf")
+        if game.is_winner(player):
+            return float("inf")
 
-    my_moves = len(game.get_legal_moves(player))
-    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    total = float(my_moves + opponent_moves)/100.0
-    score = float(total * my_moves - (1-total) * opponent_moves)
+        # my_moves = len(game.get_legal_moves(player))
+        # opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+        # loc1 = list(game.get_player_location(player))
+        # loc2 = list(game.get_player_location(game.get_opponent(player)))
 
-    loc1 = list(game.get_player_location(player))
-    loc2 = list(game.get_player_location(game.get_opponent(player)))
+        # distance = np.sqrt(np.square([loc1[0] - loc2[0]]) + np.square([loc1[1] - loc2[1]]))[0]
 
-    distance = np.sqrt(np.square([loc1[0] - loc2[0]]) + np.square([loc1[1] - loc2[1]]))[0]
+        # return 0.5 * distance
 
-    if distance > 2.0:
-        return 0.0 - distance
-    return distance
+
+        my_moves=len(game.get_legal_moves(player))
+        opp_moves=len(game.get_legal_moves(game.get_opponent(player)))
+        progress=(my_moves+opp_moves)/49
+        return (progress*my_moves-(1-progress)*opp_moves)
+
+
+    def heuristic1():
+        if game.is_loser(player):
+            return float("-inf")
+
+        if game.is_winner(player):
+            return float("inf")
+
+        my_moves = len(game.get_legal_moves(player))
+        opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+        loc1 = list(game.get_player_location(player))
+        loc2 = list(game.get_player_location(game.get_opponent(player)))
+
+        distance = np.sqrt(np.square([loc1[0] - loc2[0]]) + np.square([loc1[1] - loc2[1]]))[0]
+
+        if distance > 2.0:
+            return 0.0 - distance
+        return distance
+
+
+
+
+
+    return heuristic2()
+
+
 
 class CustomPlayer:
     """Game-playing agent that chooses a move using your evaluation function
